@@ -38,6 +38,11 @@ print('The server is listening on port', serverport)
 while True:
     clientSocket, addr = serverSocket.accept()
     print('Client, ', addr, 'connected')
+    
+    clientSocket.send('ServerTypeNonJSON'.encode())
+    clientSocket.send("The following commands are accepted: random, add, subtract" \
+        "the server will prompt for the required numbers seperated by spaces".encode())
+    
     Thread(target=serviceClient, args=(clientSocket,)).start()
 
     
