@@ -8,9 +8,7 @@ serverSocket = socket(AF_INET, SOCK_STREAM)
 serverSocket.bind(('', serverPort))
 serverSocket.listen(2)
 
-# Før eller siden skal beskeden sendes til klienten, pt. er det der bare som en påmindelse
-print("The following commands are accepted: random, add, subtract" \
-        "all must be immediately succeeded by the required numbers seperated by spaces")
+
 
 def serviceClient(connectionSocketLocal):
     while True:
@@ -35,6 +33,6 @@ while True:
     
     clientSocket.send('ServerTypeJSON'.encode())
     clientSocket.send("The following commands are accepted: random, add, subtract" \
-        "all must be immediately succeeded by the required numbers seperated by spaces".encode())
+        "\nAll must be immediately succeeded by the required numbers seperated by spaces".encode())
     
     Thread(target=serviceClient, args=(clientSocket,)).start()
