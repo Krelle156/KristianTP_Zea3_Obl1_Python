@@ -12,15 +12,20 @@ serverSocket.listen(2)
 
 def serviceClient(connectionSocketLocal):
     while True:
-        message = connectionSocketLocal.recv(1024).decode()
+        message = connectionSocketLocal.recv(1024).decode(errors="replace")
         messageDict = Jason_Bourne.loads(message)
 
-        if messageDict["command"].lower() == "random":
-            response = randomInRange(int(messageDict["num1"]), int(messageDict["num2"]))
-        elif messageDict["command"].lower() == 'add':
-            response = Add(int(messageDict["num1"]), int(messageDict["num2"]))
-        elif messageDict["command"].lower() == 'subtract':
-            response = Subtract(int(messageDict["num1"]), int(messageDict["num2"]))
+        try:
+            if messageDict["command"].lower() == "random":
+                response = randomInRange(int(messageDict["num1"]), int(messageDict["num2"]))
+            elif messageDict["command"].lower() == 'add':
+                response = Add(int(messageDict["num1"]), int(messageDict["num2"]))
+            elif messageDict["command"].lower() == 'subtract':
+                response = Subtract(int(messageDict["num1"]), int(messageDict["num2"]))
+            else:
+                response = 'error'
+        except Exception: #Jeg er doven, så bare Exception, men det burde virke, tror jeg 
+            response = 'error'
         
         responseDict = {"response": response}
         connectionSocketLocal.send(Jason_Bourne.dumps(responseDict).encode())

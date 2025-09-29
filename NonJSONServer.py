@@ -10,7 +10,7 @@ serverSocket.listen(2)
 def serviceClient(connectionSocketLocal):
     while True:
 
-        message = connectionSocketLocal.recv(1024).decode()
+        message = connectionSocketLocal.recv(1024).decode(errors="replace")
 
         # Nu er det nok ikke en super god praksis, men siden at opaven ikke efterspørger fejlhåndtering kan jeg lige så godt antage at det altid er random/add/subtract
         # Og at respons så derfor altid bør være "input numbers"
@@ -18,18 +18,23 @@ def serviceClient(connectionSocketLocal):
         connectionSocketLocal.send(inputRequest.encode())
         response = ''
 
-        if message.lower() == 'random':
-            clientInputMsg = connectionSocketLocal.recv(1024).decode()
-            numbers = clientInputMsg.split(' ')
-            response = randomInRange(int(numbers[0]), int(numbers[1]))
-        elif message.lower() == 'add':
-            clientInputMsg = connectionSocketLocal.recv(1024).decode()
-            numbers = clientInputMsg.split(' ')
-            response = Add(int(numbers[0]), int(numbers[1]))
-        elif message.lower() == 'subtract':
-            clientInputMsg = connectionSocketLocal.recv(1024).decode()
-            numbers = clientInputMsg.split(' ')
-            response = Subtract(int(numbers[0]), int(numbers[1]))
+        try:
+            if message.lower() == 'random':
+                clientInputMsg = connectionSocketLocal.recv(1024).decode(errors="replace")
+                numbers = clientInputMsg.split(' ')
+                response = randomInRange(int(numbers[0]), int(numbers[1]))
+            elif message.lower() == 'add':
+                clientInputMsg = connectionSocketLocal.recv(1024).decode(errors="replace")
+                numbers = clientInputMsg.split(' ')
+                response = Add(int(numbers[0]), int(numbers[1]))
+            elif message.lower() == 'subtract':
+                clientInputMsg = connectionSocketLocal.recv(1024).decode(errors="replace")
+                numbers = clientInputMsg.split(' ')
+                response = Subtract(int(numbers[0]), int(numbers[1]))
+            else:
+                response = 'error'
+        except Exception: #Jeg er doven, så bare Exception, men det burde virke, tror jeg
+            response = 'error'
 
         connectionSocketLocal.send(str(response).encode())
 
