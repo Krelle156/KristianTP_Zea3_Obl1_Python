@@ -1,17 +1,22 @@
+from threading import Thread
 from socket import *
 import json as JavaScriptObjectNotation_Bourne
 
 def behaviourNonJSON(connectionSocketLocal):
+        Thread(target=listenerNonJSON, args=(connectionSocketLocal,)).start()
         request = input("Enter your command: ")
         connectionSocketLocal.send(request.encode())
         message = connectionSocketLocal.recv(1024).decode()
         response = input(message + ': ')
         connectionSocketLocal.send(response.encode())
-        result = connectionSocketLocal.recv(1024).decode()
-        print('Result from server: ' + result)
+
+def listenerNonJSON(connectionSocketLocal):
+     result = connectionSocketLocal.recv(1024).decode()
+     print('Result from server: ' + result)
 
 def behaviourJSON(connectionSocketLocal):
-        
+        Thread(target=listenerJSON, args=(connectionSocketLocal,)).start()
+
         request = input("Enter your command: ")
         splitRequest = request.split(' ')
         requestDict = {}
@@ -36,12 +41,15 @@ def behaviourJSON(connectionSocketLocal):
                 "num1": splitRequest[1],
                 "num2": splitRequest[2]
             }
-            
+
+              
         
         connectionSocketLocal.send(JavaScriptObjectNotation_Bourne.dumps(requestDict).encode())
-        result = connectionSocketLocal.recv(1024).decode()
-        resultDict = JavaScriptObjectNotation_Bourne.loads(result)
-        print(f'Result from server: {resultDict["response"]}')
+
+def listenerJSON(connectionSocketLocal):
+     result = connectionSocketLocal.recv(1024).decode()
+     resultDict = JavaScriptObjectNotation_Bourne.loads(result)
+     print(f'Result from server: {resultDict["response"]}')
 
 serverAdress = '127.0.0.1'
 serverPort = 12345
